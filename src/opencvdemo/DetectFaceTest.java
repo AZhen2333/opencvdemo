@@ -343,22 +343,29 @@ public class DetectFaceTest {
 
 	}
 
-	private static Mat dobj(Mat src) {
+	public static Mat dobj(Mat src) {
 		Mat dst = src.clone();
 		Mat dstImage = new Mat();
 		// 灰度处理
 		Imgproc.cvtColor(dst, dstImage, Imgproc.COLOR_BGR2GRAY, 0);
 		CascadeClassifier objDetector = new CascadeClassifier(
-				"D:\\Azhen\\install\\opencv3\\opencv\\sources\\data\\haarcascades\\haarcascade_righteye_2splits.xml");
+				"D:\\Azhen\\install\\opencv3\\opencv\\sources\\data\\haarcascades\\haarcascade_lefteye_2splits.xml");
 		MatOfRect objDetections = new MatOfRect();
 		objDetector.detectMultiScale(dstImage, objDetections);
+		System.out.println(String.format("Detected %s eyes", objDetections.toArray().length));
 		if (objDetections.toArray().length <= 0) {
 			return src;
 		}
-		System.out.println(String.format("Detected %s eyes", objDetections.toArray().length));
 		for (Rect rect : objDetections.toArray()) {
 			Imgproc.rectangle(dstImage, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),
 					new Scalar(0, 0, 255), 2);
+		}
+		if(objDetections.toArray().length == 2) {
+			System.err.println("睁眼");
+		}else if(objDetections.toArray().length == 1) {
+			System.err.println("闭眼");
+		}else {
+			System.err.println("检测眼睛失败");
 		}
 		return dstImage;
 	}
@@ -381,12 +388,12 @@ public class DetectFaceTest {
 		// setAlpha("E:\\person.jpg", "E:\\personAlpha.png");
 		//
 		// // 为图片添加水印
-		// watermark("E:\\person.jpg", "E:\\ling.jpg", "E:\\personWaterMark.png", 0.2f);
+//		 watermark("C:\\Users\\CaiZhenZhong\\Desktop\\personCut.jpg", "C:\\Users\\CaiZhenZhong\\Desktop\\v\\01.jpg", "E:\\personWaterMark.png", 0.2f);
 		//
 		// // 图片合成
-		// simpleMerge("E:\\person.jpg", "E:\\ling.jpg", 45, 50, "E:\\personMerge.png");
+//		 simpleMerge("C:\\Users\\CaiZhenZhong\\Desktop\\personCut.jpg", "C:\\Users\\CaiZhenZhong\\Desktop\\v\\01.jpg", 45, 50, "C:\\Users\\CaiZhenZhong\\Desktop\\personMerge.png");
 
-		Mat src = Imgcodecs.imread("C:\\Users\\CaiZhenZhong\\Desktop\\personFaceDetect.png");
+		Mat src = Imgcodecs.imread("C:\\Users\\CaiZhenZhong\\Desktop\\personCut.jpg");
 		if (src.empty()) {
 			throw new Exception("no file");
 		}
